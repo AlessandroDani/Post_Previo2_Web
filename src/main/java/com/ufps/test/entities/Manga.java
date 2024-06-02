@@ -4,8 +4,10 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.ufps.test.models.PaisDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,45 +24,42 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "manga")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class Manga implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
-	
+	private Integer id;
+
 	String nombre;
-	
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
 	@Column(name = "fecha_lanzamiento")
 	Date fechaLanzamiento;
-	
+
 	@Column
 	Integer temporadas;
-	
+
 	@ManyToOne
-    @JoinColumn(name = "pais_id")
-    private Pais paisId;
-	
+	@JoinColumn(name = "pais_id")
+	private Pais paisId;
+
 	@ManyToOne
-	@JoinColumn(name="tipo_id")
+	@JoinColumn(name = "tipo_id")
 	private Tipo tipoId;
-    
+
 	@Column
 	Integer anime;
-	
+
 	@Column
 	Integer juego;
-	
+
 	@Column
 	Integer pelicula;
-	
+
 	@JsonIgnore
 	@ManyToMany
-	@JoinTable(
-			name = "favorito",
-			joinColumns = @JoinColumn(name = "manga_id"),
-			inverseJoinColumns = @JoinColumn(name = "usuario_id"))
-	
+	@JoinTable(name = "favorito", joinColumns = @JoinColumn(name = "manga_id"), inverseJoinColumns = @JoinColumn(name = "usuario_id"))
+
 	public List<Usuario> usuarios;
-	
-	
+
 }

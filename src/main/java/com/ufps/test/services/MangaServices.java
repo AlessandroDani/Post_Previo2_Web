@@ -2,13 +2,19 @@ package com.ufps.test.services;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.ufps.test.entities.Manga;
+import com.ufps.test.entities.*;
 import com.ufps.test.error.ErrorNotFound;
 import com.ufps.test.models.MangaDTO;
+import com.ufps.test.models.PaisDTO;
+import com.ufps.test.models.TipoDTO;
 import com.ufps.test.repositories.MangaRepository;
+import com.ufps.test.repositories.PaisRepository;
+import com.ufps.test.repositories.TipoRepository;
+import com.ufps.test.services.*;
 
 @Service
 public class MangaServices {
@@ -16,13 +22,21 @@ public class MangaServices {
 	@Autowired
 	MangaRepository mangaRepository;
 
+	@Autowired
+	PaisRepository paisRepository;
+
+	@Autowired
+	TipoRepository tipoRepository;
+
+	@Autowired
+	private ModelMapper modelMapper;
+
 	public List<Manga> getMangas() {
 		return mangaRepository.findAll();
 	}
 
 	public Manga getMangaId(Integer id) {
-		return mangaRepository.findById(id)
-				.orElseThrow(() -> new ErrorNotFound("Objeto no encontrado"));
+		return mangaRepository.findById(id).orElseThrow(() -> new ErrorNotFound("Objeto no encontrado"));
 	}
 
 	public Manga deleteMangaId(Integer id) {
@@ -32,18 +46,22 @@ public class MangaServices {
 	}
 
 	public Manga postManga(MangaDTO manga) {
-		Manga mangaPost = new Manga();
-		mangaPost.setAnime(manga.getAnime());
-		mangaPost.setFechaLanzamiento(manga.getFecha_lanzamiento());
-		mangaPost.setJuego(manga.getJuego());
-		mangaPost.setNombre(manga.getNombre());
-		// mangaPost.setPaisId(manga.getPaisId());
-		mangaPost.setPelicula(manga.getPelicula());
-		mangaPost.setTemporadas(manga.getTemporadas());
-		// mangaPost.setTipoId(manga.getTipoId());
-		// mangaPost.setUsuarios(manga.getUsuarios());
-		// return mangaRepository.save(manga);
-		return null;
+		Manga mangaPost = modelMapper.map(manga, Manga.class);
+		String mensaje = "";
+		try {
+		    if (paisRepository.findById(mangaPost.getPaisId().getId()).isEmpty()) {
+		        mensaje = "Pais no existe";
+		        throw new ErrorNotFound(mensaje);
+		    }
+		    
+		    if (tipoRepository.findById(mangaPost.getTipoId().getId()).isEmpty()) {
+		        mensaje = "Tipo no existe";
+		        throw new ErrorNotFound(mensaje);
+		    }
+		} catch (ErrorNotFound e) {
+		    throw e;
+		}
+		return mangaRepository.save(mangaPost);
 	}
 
 	public Manga putMangaId(Integer id, Manga manga) {

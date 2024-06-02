@@ -26,20 +26,29 @@ public class MangaController {
 		return "SERVIDOR ENCENDIDO";
 	}
 	
+	/**
+	 * 1. Metodo de obtener todos los mangas
+	 * @return Lista de todos los mangas
+	 */
 	@GetMapping("/mangas")
 	public List<Manga> getMangas(){
 		return mangaServices.getMangas();
 	}
 	
+	/**
+	 * 2. Metodo de obtener manga por id
+	 * @param id
+	 * @return Manga con el id ingresado
+	 */
 	@GetMapping("/mangas/{id}")
-	public Manga getMangas(@PathVariable Integer id){
+	public Manga getMangas(@PathVariable("id") Integer id){
 		return mangaServices.getMangaId(id);
 	}
 	
 	@PostMapping("/manga")
 	public Manga postManga(@RequestBody MangaDTO manga) {
 		System.out.println(manga);
-		return null;
+		return mangaServices.postManga(manga);
 	}
 	
 	@PutMapping("/mangas/{id}")
