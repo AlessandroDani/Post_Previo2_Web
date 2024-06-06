@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.ufps.test.services.MangaServices;
 import com.ufps.test.entities.*;
+import com.ufps.test.error.ErrorNotFound;
 import com.ufps.test.models.MangaDTO;
 
 @RestController
@@ -48,6 +49,14 @@ public class MangaController {
 	@PostMapping("/manga")
 	public Manga postManga(@RequestBody MangaDTO manga) {
 		System.out.println(manga);
+		if(manga.getAnime() == null) throw new ErrorNotFound("el campo anime es obligatorio");
+		if(manga.getJuego() == null) throw new ErrorNotFound("el campo juego es obligatorio");
+		if(manga.getPelicula() == null) throw new ErrorNotFound("el campo pelicula es obligatorio");
+		if(manga.getFechaLanzamiento() == null) throw new ErrorNotFound("el campo dste es obligatorio");
+		if(manga.getNombre() == null) throw new ErrorNotFound("el campo nombre es obligatorio");
+		if(manga.getPaisId() == null) throw new ErrorNotFound("el campo paisId es obligatorio");
+		if(manga.getTemporadas() == null) throw new ErrorNotFound("el campo temporada es obligatorio");
+		if(manga.getTipoId() == null) throw new ErrorNotFound("el campo tipoId es obligatorio");
 		return mangaServices.postManga(manga);
 	}
 	

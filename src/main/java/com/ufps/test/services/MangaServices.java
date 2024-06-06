@@ -1,5 +1,6 @@
 package com.ufps.test.services;
 
+import java.lang.reflect.Field;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -61,7 +62,23 @@ public class MangaServices {
 		} catch (ErrorNotFound e) {
 		    throw e;
 		}
-		return mangaRepository.save(mangaPost);
+		/*
+		Field[] fields = Manga.class.getDeclaredFields();
+
+        for (Field field : fields) {
+            field.setAccessible(true); 
+            try {
+                String name = field.getName();
+                Object value = field.get(manga);
+                if(value == null || value.equals("")) {
+                	throw new ErrorNotFound("El campo " + name + " es obligatorio");
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        */
+        return mangaRepository.save(mangaPost);
 	}
 
 	public Manga putMangaId(Integer id, Manga manga) {
