@@ -80,8 +80,14 @@ public class MangaController {
 	}
 	
 	@DeleteMapping("/usuarios/{username}/favoritos/{mangaId}")
-	public List<Manga> deleteUserManga(@PathVariable("username") String username, @PathVariable("id") Integer id ) {
+	public List<Manga> deleteUserManga(@PathVariable("username") String username, @PathVariable("mangaId") Integer id ) {
 		return mangaServices.deleteFavoriteManga(username, id);
 	}
+	
+	@PostMapping("/usuarios/{username}/favoritos")
+	public List<Manga> postMangaFavorito(@PathVariable("username") String username, @RequestBody MangaDTO manga ){
+		return mangaServices.postMangaFavorito(username, manga);
+	}
+	
 	
 }

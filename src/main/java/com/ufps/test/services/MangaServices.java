@@ -113,20 +113,47 @@ public class MangaServices {
 			 throw new ErrorNotFound("Usuario no existe");
 		}
 		if(u == null) {
-			throw new ErrorNotFound("Usuario no conti");
+			throw new ErrorNotFound("Usuario no contiene mangas en favorito");
 		}
 		return u;
 	}
 
 	public List<Manga> deleteFavoriteManga(String username, Integer id) {
-		Usuario u = usuarioRepository.findByUsername(username);
+		Usuario u = new Usuario();
+		try {
+			u = usuarioRepository.findByUsername(username);
+		} catch (Exception e) {
+			 throw new ErrorNotFound("Usuario no existe");
+		}
+		
 		List<Manga> mangas = u.mangas;
 		
+		if(mangas.isEmpty()) {
+			 throw new ErrorNotFound("No contiene mangas en favorito");
+		}
+		
+		boolean flag = true;
 		for(Manga m: mangas) {
 			if(m.getId() == id) {
+				flag = false;
 				deleteMangaId(id);
 			}
 		}
+		if(!flag) {
+			 throw new ErrorNotFound("Manga no existe");
+		}
+		return u.mangas;
+	}
+
+	public List<Manga> postMangaFavorito(String username, MangaDTO m) {
+		Usuario u = new Usuario();
+		try {
+			u = usuarioRepository.findByUsername(username);
+		} catch (Exception e) {
+			 throw new ErrorNotFound("Usuario no existe");
+		}
+		Manga mangaPost = modelMapper.map(m, Manga.class);
+		u.mangas.add(mangaPost);
 		return u.mangas;
 	}
 
