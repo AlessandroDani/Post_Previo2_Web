@@ -15,6 +15,7 @@ import com.ufps.test.models.TipoDTO;
 import com.ufps.test.repositories.MangaRepository;
 import com.ufps.test.repositories.PaisRepository;
 import com.ufps.test.repositories.TipoRepository;
+import com.ufps.test.repositories.UsuarioRepository;
 import com.ufps.test.services.*;
 
 @Service
@@ -28,6 +29,9 @@ public class MangaServices {
 
 	@Autowired
 	TipoRepository tipoRepository;
+	
+	@Autowired
+	UsuarioRepository usuarioRepository;
 
 	@Autowired
 	private ModelMapper modelMapper;
@@ -41,7 +45,7 @@ public class MangaServices {
 	}
 
 	public Manga deleteMangaId(Integer id) {
-		Manga manga = mangaRepository.getById(id);
+		Manga manga = mangaRepository.findById(id).orElseThrow(() -> new ErrorNotFound("Objeto no encontrado"));
 		mangaRepository.deleteById(id);
 		return manga;
 	}
@@ -62,39 +66,42 @@ public class MangaServices {
 		} catch (ErrorNotFound e) {
 		    throw e;
 		}
-		/*
-		Field[] fields = Manga.class.getDeclaredFields();
-
-        for (Field field : fields) {
-            field.setAccessible(true); 
-            try {
-                String name = field.getName();
-                Object value = field.get(manga);
-                if(value == null || value.equals("")) {
-                	throw new ErrorNotFound("El campo " + name + " es obligatorio");
-                }
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
-        }
-        */
         return mangaRepository.save(mangaPost);
 	}
 
-	public Manga putMangaId(Integer id, Manga manga) {
-		Manga mangaBuscado = mangaRepository.getById(id);
-		mangaBuscado.setAnime(manga.getId());
-		mangaBuscado.setFechaLanzamiento(manga.getFechaLanzamiento());
-		mangaBuscado.setJuego(manga.getJuego());
-		mangaBuscado.setNombre(manga.getNombre());
-		mangaBuscado.setPaisId(manga.getPaisId());
-		mangaBuscado.setPelicula(manga.getPelicula());
-		mangaBuscado.setTemporadas(manga.getTemporadas());
-		mangaBuscado.setTipoId(manga.getTipoId());
-		mangaBuscado.setUsuarios(manga.getUsuarios());
-		mangaRepository.deleteById(id);
+	public Manga putMangaId(Integer id, MangaDTO m) {
+		 try {
+		        Manga existingManga = mangaRepository.findById(id).orElseThrow(() -> new ErrorNotFound("Objeto no encontrado"));
 
-		return mangaBuscado;
+		        modelMapper.map(m, existingManga);
+
+		        existingManga.setId(id);
+
+		        if (paisRepository.findById(existingManga.getPaisId().getId()).isEmpty()) {
+		            throw new ErrorNotFound("Pais no existe");
+		        }
+		        if (tipoRepository.findById(existingManga.getTipoId().getId()).isEmpty()) {
+		            throw new ErrorNotFound("Tipo no existe");
+		        }
+
+		        return mangaRepository.save(existingManga);
+
+		    } catch (Exception e) {
+		        throw new ErrorNotFound("Objeto no encontrado");
+		    }
+	}
+	
+	public List<Manga> getMangasFavoritos(String username) {
+		Usuario u = new Usuario();
+		try {
+			u = usuarioRepository.findByUsername(username);
+		} catch (Exception e) {
+			 throw new ErrorNotFound("Usuario no existe");
+		}
+		if(u == null) {
+			throw new ErrorNotFound("Usuario no conti");
+		}
+		return u.mangas;
 	}
 
 }

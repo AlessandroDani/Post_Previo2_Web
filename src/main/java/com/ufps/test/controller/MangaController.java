@@ -48,7 +48,6 @@ public class MangaController {
 	
 	@PostMapping("/manga")
 	public Manga postManga(@RequestBody MangaDTO manga) {
-		System.out.println(manga);
 		if(manga.getAnime() == null) throw new ErrorNotFound("el campo anime es obligatorio");
 		if(manga.getJuego() == null) throw new ErrorNotFound("el campo juego es obligatorio");
 		if(manga.getPelicula() == null) throw new ErrorNotFound("el campo pelicula es obligatorio");
@@ -61,12 +60,24 @@ public class MangaController {
 	}
 	
 	@PutMapping("/mangas/{id}")
-	public Manga putManga(@PathVariable Integer id, @RequestBody Manga manga){
+	public Manga putManga(@PathVariable("id") Integer id, @RequestBody MangaDTO manga){
 		return mangaServices.putMangaId(id, manga);
 	}
 	
 	@DeleteMapping("/manga/{id}")
-	public Manga deleteManga(@PathVariable Integer id) {
+	public Manga deleteManga(@PathVariable("id") Integer id) {
 		return mangaServices.deleteMangaId(id);
 	}
+	
+	@GetMapping("/usuarios/{username}/favoritos")
+	public List<Manga> getFavoritos(@PathVariable("username") String username) {
+		return mangaServices.getMangasFavoritos(username);
+	}
+	
+	/*
+	@GetMapping("/usuarios")
+	public List<Usuario> getUser(){
+		return mangaServices.getMangasFavoritos(null);
+	}
+	*/
 }

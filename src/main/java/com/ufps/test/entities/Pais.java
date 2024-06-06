@@ -27,5 +27,11 @@ public class Pais implements Serializable{
 	
 	@Column
 	String nombre;
+
+	public Pais(Integer id) {
+		super();
+		this.id = id;
+	}
+	
 	
 }
