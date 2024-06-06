@@ -1,6 +1,7 @@
 package com.ufps.test.services;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -100,6 +101,31 @@ public class MangaServices {
 		}
 		if(u == null) {
 			throw new ErrorNotFound("Usuario no conti");
+		}
+		return u.mangas;
+	}
+	
+	public List<Usuario> getUser() {
+		List<Usuario> u = new ArrayList<Usuario>();
+		try {
+			u = usuarioRepository.findAll();
+		} catch (Exception e) {
+			 throw new ErrorNotFound("Usuario no existe");
+		}
+		if(u == null) {
+			throw new ErrorNotFound("Usuario no conti");
+		}
+		return u;
+	}
+
+	public List<Manga> deleteFavoriteManga(String username, Integer id) {
+		Usuario u = usuarioRepository.findByUsername(username);
+		List<Manga> mangas = u.mangas;
+		
+		for(Manga m: mangas) {
+			if(m.getId() == id) {
+				deleteMangaId(id);
+			}
 		}
 		return u.mangas;
 	}

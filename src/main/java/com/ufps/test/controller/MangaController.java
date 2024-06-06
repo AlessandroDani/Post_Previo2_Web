@@ -74,10 +74,14 @@ public class MangaController {
 		return mangaServices.getMangasFavoritos(username);
 	}
 	
-	/*
 	@GetMapping("/usuarios")
 	public List<Usuario> getUser(){
-		return mangaServices.getMangasFavoritos(null);
+		return mangaServices.getUser();
 	}
-	*/
+	
+	@DeleteMapping("/usuarios/{username}/favoritos/{mangaId}")
+	public List<Manga> deleteUserManga(@PathVariable("username") String username, @PathVariable("id") Integer id ) {
+		return mangaServices.deleteFavoriteManga(username, id);
+	}
+	
 }
